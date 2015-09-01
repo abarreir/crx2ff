@@ -1,7 +1,10 @@
+var fs = require('fs');
 var glob = require('glob');
+var tmp = require('tmp');
 
 var exprFinder = require('./expr-finder');
 var matcher = require('./support-matcher');
+var crxUnzip = require('./utils/unzip-crx');
 
 var unknownApis = {};
 var usedApis = {};
@@ -77,4 +80,34 @@ function treatExpression (expr, locations, scriptPath) {
     });
 }
 
-module.exports = processExtensionFiles;
+function checker (path, cb) {
+    fs.lstat(path, function (error, stats) {
+        if (error) {
+            return cb(error);
+        }
+
+        if (!stats.isDirectory() && !path.match(/\.crx$/)) {
+            return cb(new Error("Path must point to a directory or crx."));
+        }
+
+        if (stats.isDirectory()) {
+            return processExtensionFiles(path, cb);
+        }
+
+        tmp.dir({unsafeCleanup: true}, function (error, tmpPath) {
+            if (error) {
+                return cb(error);
+            }
+
+            crxUnzip(path, tmpPath, function (error) {
+                if (error) {
+                    return cb(error);
+                }
+
+                return processExtensionFiles(tmpPath, cb);
+            });
+        });
+    });
+}
+
+module.exports = checker;
