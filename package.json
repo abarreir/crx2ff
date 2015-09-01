@@ -2,14 +2,14 @@
   "name": "crx2ff",
   "version": "0.2.0",
   "description": "Find out what it'd take to port a Chrome extension to Firefox with the WebExtensions API.",
-  "main": "libs/ext-checker.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/abarreir/crx2ff.git"
   },
   "preferGlobal": true,
   "bin": {
-    "crx2ff": "index.js"
+    "crx2ff": "cli.js"
   },
   "dependencies": {
     "chalk": "^1.1.1",
