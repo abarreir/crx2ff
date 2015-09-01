@@ -1,6 +1,6 @@
 {
   "name": "crx2ff",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Find out what it'd take to port a Chrome extension to Firefox with the WebExtensions API.",
   "main": "index.js",
   "repository": {
