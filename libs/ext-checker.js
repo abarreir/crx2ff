@@ -86,8 +86,8 @@ function checker (path, cb) {
             return cb(error);
         }
 
-        if (!stats.isDirectory() && !path.match(/\.crx$/)) {
-            return cb(new Error("Path must point to a directory or crx."));
+        if (!stats.isDirectory() && !path.match(/\.(crx|zip)$/)) {
+            return cb(new Error("Path must point to a directory, crx or zip."));
         }
 
         if (stats.isDirectory()) {
