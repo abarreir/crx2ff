@@ -1,15 +1,17 @@
 var fs = require('fs');
 var glob = require('glob');
 var tmp = require('tmp');
+var async = require('async');
 
 var exprFinder = require('./expr-finder');
 var matcher = require('./support-matcher');
 var crxUnzip = require('./utils/unzip-crx');
+var manifestChecker = require('./manifest-checker');
 
 var unknownApis = {};
 var usedApis = {};
 
-function processExtensionFiles (extensionPath, cb) {
+function processScripts (extensionPath, cb) {
     glob(extensionPath + "/**/*.js", function (error, scripts) {
         if (error) {
             return cb(error);
@@ -20,6 +22,32 @@ function processExtensionFiles (extensionPath, cb) {
         return cb(null, {
             used: usedApis,
             unknown: unknownApis
+        });
+    });
+}
+
+function processManifest (extensionPath, cb) {
+    fs.readFile(extensionPath + "/manifest.json", function (error, manifest) {
+        if (error) {
+            return cb(error);
+        }
+
+        return cb(null, manifestChecker(JSON.parse(manifest)));
+    });
+}
+
+function processExtensionFiles (extensionPath, cb) {
+    async.series([
+        processManifest.bind(this, extensionPath),
+        processScripts.bind(this, extensionPath)
+    ], function (error, results) {
+        if (error) {
+            return cb(error);
+        }
+
+        return cb(null, {
+            scriptsReport: results[1],
+            manifestReport: results[0]
         });
     });
 }
@@ -94,7 +122,7 @@ function checker (path, cb) {
             return processExtensionFiles(path, cb);
         }
 
-        tmp.dir({unsafeCleanup: true}, function (error, tmpPath) {
+        tmp.dir({unsafeCleanup: true, keep: true}, function (error, tmpPath) {
             if (error) {
                 return cb(error);
             }

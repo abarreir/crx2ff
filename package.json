@@ -12,6 +12,7 @@
     "crx2ff": "cli.js"
   },
   "dependencies": {
+    "async": "^1.4.2",
     "chalk": "^1.1.1",
     "esprima": "^2.5.0",
     "estraverse": "^4.1.0",
