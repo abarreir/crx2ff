@@ -21,18 +21,6 @@ function FullSupport () {
     };
 }
 
-function BrowserActionSupport (propsChain) {
-    if (propsChain.indexOf("setIcon") === 0) {
-        return new SupportStatus("WARN", "The imageData attribute on setIcon is not supported.");
-    }
-
-    if (propsChain.match(/^(enable|disable)/) !== null) {
-        return new SupportStatus("NO_SUPPORT");
-    }
-
-    return new SupportStatus("SUPPORT");
-}
-
 function ExtensionSupport (propsChain) {
     if (propsChain.match(/^(getBackgroundPage|getURL)/) === null) {
         return new SupportStatus("NO_SUPPORT");
@@ -95,7 +83,7 @@ function StorageSupport (propsChain) {
         return new SupportStatus("NO_SUPPORT");
     }
 
-    if (propsChain.match(/(getBytesInUse|clear)/) !== null) {
+    if (propsChain.match(/(getBytesInUse)/) !== null) {
         return new SupportStatus("NO_SUPPORT");
     }
 
@@ -139,6 +127,10 @@ function TabsSupport (propsChain) {
         return new SupportStatus("WARN", "Highlighted and active are treated as the same since Firefox cannot select multiple tabs.")
     }
 
+    if (propsChain.indexOf("executeScript") === 0) {
+        return new SupportStatus("WARN", "The callback argument is not supported yet.")
+    }
+
     return new SupportStatus("SUPPORT");
 }
 
@@ -159,11 +151,11 @@ function WebNavigationSupport (propsChain) {
     if (propsChain.indexOf("onReferenceFragmentUpdated") === 0) {
         return [
             new SupportStatus("WARN", "This method also triggers for pushState."),
-            new SupportStatus("WARN", "Filtering is unsupported.")
+            new SupportStatus("WARN", "Filtering, transition types and qualifiers are unsupported.")
         ];
     }
 
-    return new SupportStatus("WARN", "Filtering is unsupported.");
+    return new SupportStatus("WARN", "Filtering, transition types and qualifiers are unsupported.");
 }
 
 function WebRequestSupport (propsChain) {
@@ -211,12 +203,60 @@ function WindowsSupport (propsChain) {
     return new SupportStatus("SUPPORT");
 }
 
+function BookmarksSupport (propsChain) {
+    var noSupport = [
+        "getRecent",
+        "search",
+        "removeTree", 
+        "onCreated",
+        "onRemoved",
+        "onChanged",
+        "onMoved",
+        "onChildrenReordered",
+        "onImportBegan",
+        "onImportEnded",
+        "BookmarkTreeNodeUnmodifiable"
+    ].join('|');
+
+    var r = new RegExp("^(" + noSupport + ")");
+
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("NO_SUPPORT");
+    }
+
+    if (propsChain.indexOf("removes") === 0) {
+        return new SupportStatus("WARN", "This method also removes non empty folders.");
+    }
+
+    return new SupportStatus("SUPPORT");
+}
+
+function CookiesSupport (propsChain) {
+    if (propsChain.indexOf("onChanged") === 0) {
+        return new SupportStatus("WARN", "Events might be subtely different.");
+    }
+
+    if (propsChain.indexOf("set") === 0) {
+        return new SupportStatus("WARN", "Creating session cookies with set might fail.");
+    }
+
+    if (propsChain.indexOf("getAllCookieStores") === 0) {
+        return new SupportStatus("WARN", "This method always just returns one default store and no tabs.");
+    }
+
+    return new SupportStatus("SUPPORT");
+}
+
 module.exports = {
     // Fully supported APIs
     "alarms": FullSupport(),
+    "contextMenus": FullSupport(),
+    "browserAction": FullSupport(),
+    "pageAction": FullSupport(),
 
     // Partially supported APIs
-    "browserAction": BrowserActionSupport,
+    "bookmarks": BookmarksSupport,
+    "cookies": CookiesSupport,
     "extension": ExtensionSupport,
     "i18n": i18nSupport,
     "notifications": NotificationsSupport,
@@ -228,14 +268,11 @@ module.exports = {
     "windows": WindowsSupport,
 
     // Future APIs
-    "bookmarks": FutureSupport(),
     "commands": FutureSupport(),
-    "contextMenus": FutureSupport(),
-    "cookies": FutureSupport(),
     "downloads": FutureSupport(),
     "history": FutureSupport(),
     "idle": FutureSupport(),
     "omnibox": FutureSupport(),
-    "pageAction": FutureSupport(),
     "permissions": FutureSupport(),
+    "devtools.panels": FutureSupport()
 };
