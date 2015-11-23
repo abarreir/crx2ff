@@ -89,9 +89,12 @@ function PermissionsKeySupport (value) {
                 if (!ffApi) {
                     warnNoSupport(permission);
                 } else {
+                    // If that api has an entry on the firefox support map,
+                    // it means it is supported to some extent. Only "future
+                    // support" apis should be marked has not supported 
                     var apiSupport = ffApi("");
 
-                    if (apiSupport.type === "NO_SUPPORT" || apiSupport.type === "FUTURE_SUPPORT") {
+                    if (apiSupport.type === "FUTURE_SUPPORT") {
                         warnNoSupport(permission);
                     }
                 }
