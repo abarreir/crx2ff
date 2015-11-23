@@ -20,6 +20,7 @@
     "jszip": "^2.5.0",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
+    "request": "^2.67.0",
     "tmp": "0.0.27"
   },
   "keywords": [

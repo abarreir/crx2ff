@@ -38,16 +38,16 @@ function processManifest (extensionPath, cb) {
 
 function processExtensionFiles (extensionPath, cb) {
     async.series([
-        processManifest.bind(this, extensionPath),
-        processScripts.bind(this, extensionPath)
+        processScripts.bind(this, extensionPath),
+        processManifest.bind(this, extensionPath)
     ], function (error, results) {
         if (error) {
             return cb(error);
         }
 
         return cb(null, {
-            scriptsReport: results[1],
-            manifestReport: results[0]
+            scriptsReport: results[0],
+            manifestReport: results[1]
         });
     });
 }
