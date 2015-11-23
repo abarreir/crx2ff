@@ -122,7 +122,7 @@ function checker (path, cb) {
             return processExtensionFiles(path, cb);
         }
 
-        tmp.dir({unsafeCleanup: true, keep: true}, function (error, tmpPath) {
+        tmp.dir({unsafeCleanup: true}, function (error, tmpPath) {
             if (error) {
                 return cb(error);
             }
