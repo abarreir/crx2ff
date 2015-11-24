@@ -1,6 +1,9 @@
 # crx2ff
 
-Find out what it'd take to port a Chrome extension to Firefox with the WebExtensions API.
+[![NPM version][npm-image]][npm-url]
+[![NPM downloads][downloads-image]][downloads-url]
+
+Check the compatibility of a Chrome extension with the Firefox WebExtensions API.
 
 ## Installation
 
