@@ -128,7 +128,10 @@ function TabsSupport (propsChain) {
     }
 
     if (propsChain.indexOf("executeScript") === 0) {
-        return new SupportStatus("WARN", "The callback argument is not supported yet.")
+        return [
+            new SupportStatus("WARN", "The callback argument is not supported yet."),
+            new SupportStatus("WARN", "Host permissions are not enforced yet.")
+        ];
     }
 
     return new SupportStatus("SUPPORT");
@@ -244,7 +247,10 @@ function CookiesSupport (propsChain) {
         return new SupportStatus("WARN", "This method always just returns one default store and no tabs.");
     }
 
-    return new SupportStatus("SUPPORT");
+    return [
+        new SupportStatus("WARN", "Accessing cookies from private tabs is impossible."),
+        new SupportStatus("WARN", "Host permissions are not currently enforced.")
+    ];
 }
 
 module.exports = {
