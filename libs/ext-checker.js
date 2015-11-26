@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var glob = require('glob');
 var tmp = require('tmp');
 var async = require('async');
@@ -17,7 +18,7 @@ function processScripts (extensionPath, cb) {
             return cb(error);
         }
 
-        scripts.forEach(processScript);
+        scripts.forEach(processScript.bind(this, extensionPath));
 
         return cb(null, {
             used: usedApis,
@@ -52,7 +53,7 @@ function processExtensionFiles (extensionPath, cb) {
     });
 }
 
-function processScript (scriptPath) {
+function processScript (extensionPath, scriptPath) {
     // Returns chrome.* expressions found in file at scriptPath
     var chromeExprs = exprFinder(scriptPath);
 
@@ -61,7 +62,8 @@ function processScript (scriptPath) {
     }
 
     Object.keys(chromeExprs).forEach(function (expr) {
-        treatExpression(expr, chromeExprs[expr], scriptPath);
+        var relPath = path.relative(extensionPath, scriptPath);
+        treatExpression(expr, chromeExprs[expr], relPath);
     });
 }
 
