@@ -1,34 +1,32 @@
-var fs = require('fs');
+var fs = require('fs-extra');
 
 var jszip = require('jszip');
 var path = require('path');
-var mkdirp = require('mkdirp');
+var async = require('async');
 
 function doUnzip (buffer, targetPath, cb) {
     var zip = new jszip(buffer);
 
-    try {
-        Object.keys(zip.files).forEach(function(filename) {
-            var isFile = !zip.files[filename].dir,
-                fullpath  = path.join(targetPath, filename),
-                directory = isFile && path.dirname(fullpath) || fullpath,
-                content = zip.files[filename].asNodeBuffer();
+    async.eachSeries(Object.keys(zip.files), function (filename, onDone) {
+        var isFile = !zip.files[filename].dir,
+            fullpath  = path.join(targetPath, filename),
+            directory = isFile && path.dirname(fullpath) || fullpath,
+            content = zip.files[filename].asNodeBuffer();
             
-            mkdirp(directory, function (error) {
-                if (error) {
-                    throw error;
-                }
-                
-                if (isFile) {
-                    fs.writeFileSync(fullpath, content);
-                }
-            });
-        });
-    } catch (error) {
-        return cb(error);
-    }
+        fs.mkdirs(directory, function (error) {
+            if (error) {
+                return onDone(error)
+            }
+            
+            if (isFile) {
+                return fs.writeFile(fullpath, content, onDone);
+            }
 
-    return cb(null);
+            return onDone(null);
+        });
+    }, function (error) {
+        return cb(error);
+    });
 }
 
 
