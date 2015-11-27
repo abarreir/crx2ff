@@ -14,21 +14,26 @@ npm install -g crx2ff
 ## Usage
 
 ```sh
-# With a local extension folder
-crx2ff --path ~/path/to/an/extension
+# Analyse an extension
+crx2ff analyse <extension> [--reporter=<REPORTER>] [--report-file=<FILE>]
 
-# With an extension stored on the CWS
-crx2ff --id fdjamakpfbbddfjaooikfcpapjohcfmg
-
-# Export compatibility report to json
-crx2ff --id fdjamakpfbbddfjaooikfcpapjohcfmg --reporter json
+# Convert an extension
+crx2ff convert <extension> [--output=<FILE>]
 ```
 
 ### Arguments
 
-* `--path [path]` path to an extension folder/crx/zip
-* `--reporter [cli|json]` reporting method selection (defaults to cli)
-* `--id [cwsExtensionId]` retrieve and analyse an extension stored in the Chrome WebStore
+The extension to process can be provided as:
+* A path to a local extension folder
+* A path to a local crx or zip of the extension
+* An id of an extension stored on the Chrome WebStore
+
+Reporting arguments
+* `--reporter=REPORTER` Analysis reporter selection (defaults to cli)
+* `--report-file=FILE` Output file for json reporting (defaults to ./crx2ff.json)
+
+Conversion arguments
+* `--output=FILE` Conversion output file (defaults to ./crx2ff.xpi)
 
 ## License
 

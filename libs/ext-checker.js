@@ -1,13 +1,12 @@
 var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
-var tmp = require('tmp');
 var async = require('async');
 
-var exprFinder = require('./expr-finder');
+var loadExtension = require('./ext-loader');
+var findExpressions = require('./expr-finder');
 var matcher = require('./support-matcher');
-var crxUnzip = require('./utils/unzip-crx');
-var manifestChecker = require('./manifest-checker');
+var checkManifest = require('./manifest-checker');
 
 var unknownApis = {};
 var usedApis = {};
@@ -33,7 +32,7 @@ function processManifest (extensionPath, cb) {
             return cb(error);
         }
 
-        return cb(null, manifestChecker(JSON.parse(manifest)));
+        return cb(null, checkManifest(JSON.parse(manifest)));
     });
 }
 
@@ -55,7 +54,7 @@ function processExtensionFiles (extensionPath, cb) {
 
 function processScript (extensionPath, scriptPath) {
     // Returns chrome.* expressions found in file at scriptPath
-    var chromeExprs = exprFinder(scriptPath);
+    var chromeExprs = findExpressions(scriptPath);
 
     if (!chromeExprs) {
         return;
@@ -110,33 +109,13 @@ function treatExpression (expr, locations, scriptPath) {
     });
 }
 
-function checker (path, cb) {
-    fs.lstat(path, function (error, stats) {
+function checker (pathOrId, cb) {
+    return loadExtension(pathOrId, true, function (error, extensionPath) {
         if (error) {
             return cb(error);
         }
 
-        if (!stats.isDirectory() && !path.match(/\.(crx|zip)$/)) {
-            return cb(new Error("Path must point to a directory, crx or zip."));
-        }
-
-        if (stats.isDirectory()) {
-            return processExtensionFiles(path, cb);
-        }
-
-        tmp.dir({unsafeCleanup: true}, function (error, tmpPath) {
-            if (error) {
-                return cb(error);
-            }
-
-            crxUnzip(path, tmpPath, function (error) {
-                if (error) {
-                    return cb(error);
-                }
-
-                return processExtensionFiles(tmpPath, cb);
-            });
-        });
+        return processExtensionFiles(extensionPath, cb);
     });
 }
 
