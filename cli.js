@@ -4,7 +4,6 @@ var extensionChecker = require('./libs/ext-checker');
 var extensionConverter = require('./libs/ext-converter');
 var cliReporter = require('./libs/reporters/cli-reporter');
 var jsonReporter = require('./libs/reporters/json-reporter');
-var dlCrx = require('./libs/utils/dl-crx');
 
 var argv = require('minimist')(process.argv.slice(2));
 

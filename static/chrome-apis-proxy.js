@@ -29,7 +29,7 @@
                 return recursiveProxy(propsChain + "." + name);
             },
 
-            apply: function (target, thisArg, argumentsList) {
+            apply: function () {
                 crx2ffwarn(propsChain + " called");
             }
         })
