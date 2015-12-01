@@ -92,7 +92,6 @@ function StorageSupport (propsChain) {
 
 function TabsSupport (propsChain) {
     var noSupport = [
-        "getCurrent", 
         "sendRequest", 
         "getSelected", 
         "duplicate", 
