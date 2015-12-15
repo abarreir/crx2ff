@@ -4,6 +4,7 @@ var path = require('path');
 var jszip = require('jszip');
 
 var loadExtension = require('./ext-loader');
+var apiProxyPath = __dirname + '/../static/chrome-apis-proxy.js';
 
 function updateManifest (extensionPath, cb) {
     // Add missing fields to json manifest
@@ -51,7 +52,7 @@ function convertExtension (extensionPath, outputPath, cb) {
         })
         .on('end', function () {
             // Add our api proxy script to bundle
-            zip.file('chrome-apis-proxy.js', fs.readFileSync('static/chrome-apis-proxy.js'));
+            zip.file('chrome-apis-proxy.js', fs.readFileSync(apiProxyPath));
 
             var z = zip.generate({type: 'nodebuffer'});
 
