@@ -34,7 +34,7 @@ Reporting arguments
 
 Conversion arguments
 * `--output=FILE` Conversion output file (defaults to ./crx2ff.xpi)
-* '--id=ID' Created extension id (defaults to crx2ff@example.org)
+* `--id=ID` Created extension id (defaults to crx2ff@example.org)
 
 ## License
 
