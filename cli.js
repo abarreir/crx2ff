@@ -40,5 +40,9 @@ if (command === 'analyse') {
         return cliReporter(report);
     });
 } else {
-    return extensionConverter(argv._[1], argv.output, console.log.bind(console));
+    return extensionConverter(argv._[1], argv.output, argv.id, function (error) {
+        if (error) {
+            return console.error(error);
+        }
+    });
 }

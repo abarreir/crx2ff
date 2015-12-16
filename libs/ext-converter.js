@@ -6,7 +6,7 @@ var jszip = require('jszip');
 var loadExtension = require('./ext-loader');
 var apiProxyPath = __dirname + '/../static/chrome-apis-proxy.js';
 
-function updateManifest (extensionPath, cb) {
+function updateManifest (extensionPath, extensionId, cb) {
     // Add missing fields to json manifest
     var manifestPath = extensionPath + "/manifest.json";
 
@@ -19,7 +19,7 @@ function updateManifest (extensionPath, cb) {
 
         m.applications = {
             gecko: {
-                id: "addanidhereatsomepoint@test.com"
+                id: extensionId || "crx2ff@example.org"
             }
         };
 
@@ -34,8 +34,8 @@ function updateManifest (extensionPath, cb) {
     });
 }
 
-function convertExtension (extensionPath, outputPath, cb) {
-    updateManifest(extensionPath, function (error) {
+function convertExtension (extensionPath, outputPath, extensionId, cb) {
+    updateManifest(extensionPath, extensionId, function (error) {
         if (error) {
             return cb(error);
         }
@@ -61,13 +61,13 @@ function convertExtension (extensionPath, outputPath, cb) {
     });
 }
 
-function converter (pathOrId, outputPath, cb) {
+function converter (pathOrId, outputPath, extensionId, cb) {
     return loadExtension(pathOrId, false, function (error, extensionPath) {
         if (error) {
             return cb(error);
         }
 
-        return convertExtension(extensionPath, outputPath, cb);
+        return convertExtension(extensionPath, outputPath, extensionId, cb);
     });
 }
 

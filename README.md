@@ -18,7 +18,7 @@ npm install -g crx2ff
 crx2ff analyse <extension> [--reporter=<REPORTER>] [--report-file=<FILE>]
 
 # Convert an extension
-crx2ff convert <extension> [--output=<FILE>]
+crx2ff convert <extension> [--output=<FILE>] [--id=<ID>]
 ```
 
 ### Arguments
@@ -34,6 +34,7 @@ Reporting arguments
 
 Conversion arguments
 * `--output=FILE` Conversion output file (defaults to ./crx2ff.xpi)
+* '--id=ID' Created extension id (defaults to crx2ff@example.org)
 
 ## License
 
