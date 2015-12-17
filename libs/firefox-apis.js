@@ -139,7 +139,7 @@ function RuntimeSupport (propsChain) {
 }
 
 function StorageSupport (propsChain) {
-    if (propsChain.match(/^sync/) !== null) {
+    if (propsChain.match(/^(sync|managed)/) !== null) {
         return new SupportStatus("NO_SUPPORT");
     }
 
