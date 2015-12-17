@@ -201,7 +201,8 @@ function WebNavigationSupport (propsChain) {
         "getFrame",
         "getAllFrames",
         "onCreatedNavigationTarget",
-        "onHistoryStateUpdated"
+        "onHistoryStateUpdated",
+        "onTabReplaced",
     ].join('|');
 
     var r = new RegExp("^(" + noSupport + ")");
