@@ -22,11 +22,33 @@ function FullSupport () {
 }
 
 function ExtensionSupport (propsChain) {
-    if (propsChain.match(/^(getBackgroundPage|getURL)/) === null) {
-        return new SupportStatus("NO_SUPPORT");
+    var support = [
+        "getURL",
+        "inIncognitoContex",
+        "getBackgroundPage",
+        "getViews",
+    ].join('|');
+
+    var r = new RegExp("^(" + support + ")");
+
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("SUPPORT");
     }
 
-    return new SupportStatus("SUPPORT");
+    var futureSupport = [
+        "isAllowedIncognitoAccess",
+        "isAllowedFileSchemeAccess",
+        "setUpdateUrlData",
+        "lastError",
+    ].join('|');
+
+    var r2 = new RegExp("^(" + futureSupport + ")");
+
+    if (r2.exec(propsChain) !== null) {
+        return new SupportStatus("FUTURE_SUPPORT");
+    }
+
+    return new SupportStatus("NO_SUPPORT");
 }
 
 function i18nSupport (propsChain) {
