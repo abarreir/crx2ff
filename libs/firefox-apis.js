@@ -79,25 +79,47 @@ function RuntimeSupport (propsChain) {
     var support = [
         "onStartup",
         "getManifest",
+        "getURL",
         "id",
         "sendMessage",
         "onMessage",
         "onConnect",
-        "connectNative"
+        "connect",
+        "getPlatformInfo",
     ].join('|');
 
     var r = new RegExp("^(" + support + ")");
-    var m = r.exec(propsChain);
-
-    if (m === null) {
-        return new SupportStatus("NO_SUPPORT");
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("SUPPORT");
     }
 
-    if (m[0] === "connectNative") {
+    var futureSupport = [
+        "lastError",
+        "getBackgroundPage",
+        "openOptionsPage",
+        "setUninstallURL",
+        "reload",
+        "requestUpdateCheck",
+        "restart",
+        "connectNative",
+        "sendNativeMessage",
+        "getPackageDirectoryEntry",
+        "onInstalled",
+        "onSuspend",
+        "onSuspendCanceled",
+        "onUpdateAvailable",
+        "onBrowserUpdateAvailable",
+        "onConnectExternal",
+        "onMessageExternal",
+        "onRestartRequired",
+    ].join('|');
+
+    var r2 = new RegExp("^(" + futureSupport + ")");
+    if (r2.exec(propsChain) !== null) {
         return new SupportStatus("FUTURE_SUPPORT");
     }
 
-    return new SupportStatus("SUPPORT");
+    return new SupportStatus("NO_SUPPORT");
 }
 
 function StorageSupport (propsChain) {
