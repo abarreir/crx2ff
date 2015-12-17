@@ -1,4 +1,4 @@
-// Processing is done based on the list found at 
+// Processing is done based on the list found at
 // https://wiki.mozilla.org/WebExtensions#List_of_supported_APIs
 
 // Since support of an API is not binary, there is more logic here
@@ -22,24 +22,62 @@ function FullSupport () {
 }
 
 function ExtensionSupport (propsChain) {
-    if (propsChain.match(/^(getBackgroundPage|getURL)/) === null) {
-        return new SupportStatus("NO_SUPPORT");
+    var support = [
+        "getURL",
+        "inIncognitoContex",
+        "getBackgroundPage",
+        "getViews",
+    ].join('|');
+
+    var r = new RegExp("^(" + support + ")");
+
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("SUPPORT");
     }
 
-    return new SupportStatus("SUPPORT");
+    var futureSupport = [
+        "isAllowedIncognitoAccess",
+        "isAllowedFileSchemeAccess",
+        "setUpdateUrlData",
+        "lastError",
+    ].join('|');
+
+    var r2 = new RegExp("^(" + futureSupport + ")");
+
+    if (r2.exec(propsChain) !== null) {
+        return new SupportStatus("FUTURE_SUPPORT");
+    }
+
+    return new SupportStatus("NO_SUPPORT");
 }
 
 function i18nSupport (propsChain) {
-    if (propsChain.indexOf("getMessage") === -1) {
-        return new SupportStatus("NO_SUPPORT");
+    var support = [
+        "getMessage",
+    ].join('|');
+
+    var r = new RegExp("^(" + support + ")");
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("SUPPORT");
     }
 
-    return new SupportStatus("SUPPORT");
+    var futureSupport = [
+        "getAcceptLanguages",
+        "getUILanguage",
+        "detectLanguage",
+    ].join('|');
+
+    var r2 = new RegExp("^(" + futureSupport + ")");
+    if (r2.exec(propsChain) !== null) {
+        return new SupportStatus("FUTURE_SUPPORT");
+    }
+
+    return new SupportStatus("NO_SUPPORT");
 }
 
 function NotificationsSupport (propsChain) {
     if (propsChain.indexOf("create") === 0) {
-        return new SupportStatus("WARN", "The only supported notification options are iconUrl, title, and message.")
+        return new SupportStatus("WARN", "The only supported notification options are iconUrl, title, and message.");
     }
 
     if (propsChain.indexOf("onClosed") === 0) {
@@ -55,31 +93,53 @@ function NotificationsSupport (propsChain) {
 
 function RuntimeSupport (propsChain) {
     var support = [
-        "onStartup", 
-        "getManifest", 
-        "id", 
-        "sendMessage", 
-        "onMessage", 
-        "onConnect", 
-        "connectNative"
+        "onStartup",
+        "getManifest",
+        "getURL",
+        "id",
+        "sendMessage",
+        "onMessage",
+        "onConnect",
+        "connect",
+        "getPlatformInfo",
     ].join('|');
 
     var r = new RegExp("^(" + support + ")");
-    var m = r.exec(propsChain);
-    
-    if (m === null) {
-        return new SupportStatus("NO_SUPPORT");
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("SUPPORT");
     }
 
-    if (m[0] === "connectNative") {
+    var futureSupport = [
+        "lastError",
+        "getBackgroundPage",
+        "openOptionsPage",
+        "setUninstallURL",
+        "reload",
+        "requestUpdateCheck",
+        "restart",
+        "connectNative",
+        "sendNativeMessage",
+        "getPackageDirectoryEntry",
+        "onInstalled",
+        "onSuspend",
+        "onSuspendCanceled",
+        "onUpdateAvailable",
+        "onBrowserUpdateAvailable",
+        "onConnectExternal",
+        "onMessageExternal",
+        "onRestartRequired",
+    ].join('|');
+
+    var r2 = new RegExp("^(" + futureSupport + ")");
+    if (r2.exec(propsChain) !== null) {
         return new SupportStatus("FUTURE_SUPPORT");
     }
 
-    return new SupportStatus("SUPPORT");
+    return new SupportStatus("NO_SUPPORT");
 }
 
 function StorageSupport (propsChain) {
-    if (propsChain.match(/^sync/) !== null) {
+    if (propsChain.match(/^(sync|managed)/) !== null) {
         return new SupportStatus("NO_SUPPORT");
     }
 
@@ -87,20 +147,20 @@ function StorageSupport (propsChain) {
         return new SupportStatus("NO_SUPPORT");
     }
 
-    return new SupportStatus("SUPPORT");
+    return new SupportStatus("WARN", "Not supported in content scripts. See bug 1197346");
 }
 
 function TabsSupport (propsChain) {
     var noSupport = [
-        "sendRequest", 
-        "getSelected", 
-        "duplicate", 
-        "highlight", 
-        "move", 
-        "detectLanguage", 
-        "captureVisibleTab", 
+        "sendRequest",
+        "getSelected",
+        "duplicate",
+        "highlight",
+        "move",
+        "detectLanguage",
+        "captureVisibleTab",
         "getZoom",
-        "setZoom", 
+        "setZoom",
         "getZoomSettings",
         "setZoomSettings"
     ].join('|');
@@ -123,14 +183,14 @@ function TabsSupport (propsChain) {
     var r2 = new RegExp("^(" + highlightActive + ")");
 
     if (r2.exec(propsChain) !== null) {
-        return new SupportStatus("WARN", "Highlighted and active are treated as the same since Firefox cannot select multiple tabs.")
+        return new SupportStatus("WARN", "Highlighted and active are treated as the same since Firefox cannot select multiple tabs.");
     }
 
     if (propsChain.indexOf("executeScript") === 0) {
-        return [
-            new SupportStatus("WARN", "The callback argument is not supported yet."),
-            new SupportStatus("WARN", "Host permissions are not enforced yet.")
-        ];
+        return new SupportStatus("WARN", "The callback argument is not supported yet.");
+    }
+    if (propsChain.indexOf("sendMessage") === 0) {
+        return new SupportStatus("WARN", "The implementation appears to be broken. See bug 1209869.");
     }
 
     return new SupportStatus("SUPPORT");
@@ -141,7 +201,8 @@ function WebNavigationSupport (propsChain) {
         "getFrame",
         "getAllFrames",
         "onCreatedNavigationTarget",
-        "onHistoryStateUpdated"
+        "onHistoryStateUpdated",
+        "onTabReplaced",
     ].join('|');
 
     var r = new RegExp("^(" + noSupport + ")");
@@ -163,7 +224,7 @@ function WebNavigationSupport (propsChain) {
 function WebRequestSupport (propsChain) {
     var noSupport = [
         "handlerBehaviorChanged",
-        "onAuthRequired", 
+        "onAuthRequired",
         "onBeforeRedirect",
         "onErrorOccurred"
     ].join('|');
@@ -209,7 +270,7 @@ function BookmarksSupport (propsChain) {
     var noSupport = [
         "getRecent",
         "search",
-        "removeTree", 
+        "removeTree",
         "onCreated",
         "onRemoved",
         "onChanged",
