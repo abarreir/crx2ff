@@ -9,6 +9,8 @@
                 get: function (ptarget, pname) {
                     if (gchrome[name] && gchrome[name][pname]) {
                         return gchrome[name][pname];
+                    } else if (pname === 'lastError') {
+                        return undefined;
                     } else {
                         var propsChain = "chrome." + name + "." + pname;
                         crx2ffwarn(propsChain + " not supported yet");
