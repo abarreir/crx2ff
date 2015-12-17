@@ -39,7 +39,7 @@ function i18nSupport (propsChain) {
 
 function NotificationsSupport (propsChain) {
     if (propsChain.indexOf("create") === 0) {
-        return new SupportStatus("WARN", "The only supported notification options are iconUrl, title, and message.")
+        return new SupportStatus("WARN", "The only supported notification options are iconUrl, title, and message.");
     }
 
     if (propsChain.indexOf("onClosed") === 0) {
@@ -123,7 +123,7 @@ function TabsSupport (propsChain) {
     var r2 = new RegExp("^(" + highlightActive + ")");
 
     if (r2.exec(propsChain) !== null) {
-        return new SupportStatus("WARN", "Highlighted and active are treated as the same since Firefox cannot select multiple tabs.")
+        return new SupportStatus("WARN", "Highlighted and active are treated as the same since Firefox cannot select multiple tabs.");
     }
 
     if (propsChain.indexOf("executeScript") === 0) {
