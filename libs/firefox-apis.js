@@ -147,7 +147,7 @@ function StorageSupport (propsChain) {
         return new SupportStatus("NO_SUPPORT");
     }
 
-    return new SupportStatus("SUPPORT");
+    return new SupportStatus("WARN", "Not supported in content scripts. See bug 1197346");
 }
 
 function TabsSupport (propsChain) {
