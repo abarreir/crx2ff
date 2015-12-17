@@ -189,6 +189,9 @@ function TabsSupport (propsChain) {
     if (propsChain.indexOf("executeScript") === 0) {
         return new SupportStatus("WARN", "The callback argument is not supported yet.");
     }
+    if (propsChain.indexOf("sendMessage") === 0) {
+        return new SupportStatus("WARN", "The implementation appears to be broken. See bug 1209869.");
+    }
 
     return new SupportStatus("SUPPORT");
 }
