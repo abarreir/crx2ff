@@ -187,10 +187,7 @@ function TabsSupport (propsChain) {
     }
 
     if (propsChain.indexOf("executeScript") === 0) {
-        return [
-            new SupportStatus("WARN", "The callback argument is not supported yet."),
-            new SupportStatus("WARN", "Host permissions are not enforced yet.")
-        ];
+        return new SupportStatus("WARN", "The callback argument is not supported yet.");
     }
 
     return new SupportStatus("SUPPORT");
