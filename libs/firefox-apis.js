@@ -1,4 +1,4 @@
-// Processing is done based on the list found at 
+// Processing is done based on the list found at
 // https://wiki.mozilla.org/WebExtensions#List_of_supported_APIs
 
 // Since support of an API is not binary, there is more logic here
@@ -55,18 +55,18 @@ function NotificationsSupport (propsChain) {
 
 function RuntimeSupport (propsChain) {
     var support = [
-        "onStartup", 
-        "getManifest", 
-        "id", 
-        "sendMessage", 
-        "onMessage", 
-        "onConnect", 
+        "onStartup",
+        "getManifest",
+        "id",
+        "sendMessage",
+        "onMessage",
+        "onConnect",
         "connectNative"
     ].join('|');
 
     var r = new RegExp("^(" + support + ")");
     var m = r.exec(propsChain);
-    
+
     if (m === null) {
         return new SupportStatus("NO_SUPPORT");
     }
@@ -92,15 +92,15 @@ function StorageSupport (propsChain) {
 
 function TabsSupport (propsChain) {
     var noSupport = [
-        "sendRequest", 
-        "getSelected", 
-        "duplicate", 
-        "highlight", 
-        "move", 
-        "detectLanguage", 
-        "captureVisibleTab", 
+        "sendRequest",
+        "getSelected",
+        "duplicate",
+        "highlight",
+        "move",
+        "detectLanguage",
+        "captureVisibleTab",
         "getZoom",
-        "setZoom", 
+        "setZoom",
         "getZoomSettings",
         "setZoomSettings"
     ].join('|');
@@ -163,7 +163,7 @@ function WebNavigationSupport (propsChain) {
 function WebRequestSupport (propsChain) {
     var noSupport = [
         "handlerBehaviorChanged",
-        "onAuthRequired", 
+        "onAuthRequired",
         "onBeforeRedirect",
         "onErrorOccurred"
     ].join('|');
@@ -209,7 +209,7 @@ function BookmarksSupport (propsChain) {
     var noSupport = [
         "getRecent",
         "search",
-        "removeTree", 
+        "removeTree",
         "onCreated",
         "onRemoved",
         "onChanged",
