@@ -41,18 +41,19 @@ function convertExtension (extensionPath, outputPath, extensionId, cb) {
         }
 
         var zip = new jszip();
+        var zipOpts = { compression: 'deflate' };
 
         // Zip converted extension
         fs.walk(extensionPath)
         .on('data', function (item) {
             if (item.stats.isFile()) {
                 var relPath = path.relative(extensionPath, item.path);
-                zip.file(relPath, fs.readFileSync(item.path));
+                zip.file(relPath, fs.readFileSync(item.path), zipOpts);
             }
         })
         .on('end', function () {
             // Add our api proxy script to bundle
-            zip.file('chrome-apis-proxy.js', fs.readFileSync(apiProxyPath));
+            zip.file('chrome-apis-proxy.js', fs.readFileSync(apiProxyPath), zipOpts);
 
             var z = zip.generate({type: 'nodebuffer'});
 
