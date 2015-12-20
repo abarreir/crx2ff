@@ -2,6 +2,7 @@ var fs = require('fs-extra');
 var tmp = require('tmp');
 var path = require('path');
 var jszip = require('jszip');
+var esprima = require('esprima');
 
 var loadExtension = require('./ext-loader');
 var apiProxyPath = __dirname + '/../static/chrome-apis-proxy.js';
@@ -15,7 +16,25 @@ function updateManifest (extensionPath, extensionId, cb) {
             return cb(error);
         }
 
-        var m = JSON.parse(manifest);
+        var m;
+        try {
+            m = JSON.parse(manifest);
+        }
+        catch (originalError) {
+            // JSON parsing failed
+            // trying to remove comments with esprima
+
+            var jsString = 'var o =' + manifest;
+            try {
+                var tokens = esprima.tokenize(jsString).slice(3);
+                var json = tokens.reduce((json, t) => json + t.value, '');
+                m = JSON.parse(json);
+            }
+            catch (e) {
+                originalError.message = 'Failed to parse manifest.json:\n' + originalError.message;
+                throw originalError;
+            }
+        }
 
         m.applications = {
             gecko: {
