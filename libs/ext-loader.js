@@ -1,6 +1,7 @@
 var tmp = require('tmp');
 var fs = require('fs-extra');
 var path = require('path');
+var chalk = require('chalk');
 
 var dlCrx = require('./utils/dl-crx');
 var crxUnzip = require('./utils/unzip-crx');
@@ -47,7 +48,7 @@ function loadFromPath (extensionPath, readOnly, cb) {
             var filter = function(currentPath) {
                 var skip = filterRegex.test(currentPath);
                 if (skip) {
-                    console.warn('WARNING: skipping', currentPath);
+                    console.log(chalk.yellow('Skipping', currentPath));
                 }
                 return !skip;
             };
