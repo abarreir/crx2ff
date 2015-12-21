@@ -1,13 +1,20 @@
 var tmp = require('tmp');
 var fs = require('fs-extra');
+var path = require('path');
 
 var dlCrx = require('./utils/dl-crx');
 var crxUnzip = require('./utils/unzip-crx');
 
 var cwsIdRegex = /[a-z]{32}/;
 
-var path = require('path');
-var gitRegex = new RegExp('(' + path.sep + '|^)\\.git$');
+var ignore = [
+    '\\.git',
+    '\\.hg',
+    '\\.svn',
+    '\\.DS_Store'
+].join('|');
+
+var filterRegex = new RegExp('(' + path.sep + '|^)(' + ignore + ')$');
 
 function loadFromPath (extensionPath, readOnly, cb) {
     fs.lstat(extensionPath, function (error, stats) {
@@ -24,7 +31,6 @@ function loadFromPath (extensionPath, readOnly, cb) {
             return cb(null, extensionPath);
         }
 
-
         tmp.dir({unsafeCleanup: true}, function (error, tmpPath) {
             if (error) {
                 return cb(error);
@@ -39,11 +45,11 @@ function loadFromPath (extensionPath, readOnly, cb) {
             };
 
             var filter = function(currentPath) {
-                var isGIT = gitRegex.test(currentPath);
-                if (isGIT) {
+                var skip = filterRegex.test(currentPath);
+                if (skip) {
                     console.warn('WARNING: skipping', currentPath);
                 }
-                return !isGIT;
+                return !skip;
             };
 
             // Copy extension directory into temporary one for modification
