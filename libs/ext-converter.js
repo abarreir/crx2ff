@@ -32,7 +32,7 @@ function updateManifest (extensionPath, extensionId, cb) {
             }
             catch (e) {
                 originalError.message = 'Failed to parse manifest.json:\n' + originalError.message;
-                throw originalError;
+                return cb(originalError);
             }
         }
 
