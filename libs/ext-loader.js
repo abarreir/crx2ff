@@ -8,14 +8,21 @@ var crxUnzip = require('./utils/unzip-crx');
 
 var cwsIdRegex = /[a-z]{32}/;
 
-var ignore = [
+var ignoreBaseNames = [
     '\\.git',
     '\\.hg',
     '\\.svn',
     '\\.DS_Store'
 ].join('|');
 
-var filterRegex = new RegExp('(' + path.sep + '|^)(' + ignore + ')$');
+var ignoreFileExts = [
+    'pem'
+].join('|');
+
+var filterRegex = new RegExp('(' + path.sep + '|^)(' + ignoreBaseNames +
+                             '|[^' + path.sep + ']+?\\.(' + ignoreFileExts + '))$');
+                            // does not support file names like '^.<ext>$'
+                            // e.g. '.gitignore' use ignoreBaseNames instead
 
 function loadFromPath (extensionPath, readOnly, cb) {
     fs.lstat(extensionPath, function (error, stats) {
