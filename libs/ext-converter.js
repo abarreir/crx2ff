@@ -81,8 +81,13 @@ function convertExtension (extensionPath, outputPath, extensionId, cb) {
     });
 }
 
-function converter (pathOrId, outputPath, extensionId, cb) {
-    return loadExtension(pathOrId, false, function (error, extensionPath) {
+function converter (pathOrId, outputPath, extensionId, excludes, cb) {
+    if (typeof excludes === 'function') {
+        cb = excludes;
+        excludes = null;
+    }
+
+    return loadExtension(pathOrId, false, excludes, function (error, extensionPath) {
         if (error) {
             return cb(error);
         }

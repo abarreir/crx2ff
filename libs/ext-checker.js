@@ -109,8 +109,13 @@ function treatExpression (expr, locations, scriptPath) {
     });
 }
 
-function checker (pathOrId, cb) {
-    return loadExtension(pathOrId, true, function (error, extensionPath) {
+function checker (pathOrId, excludes, cb) {
+    if (typeof excludes === 'function') {
+        cb = excludes;
+        excludes = null;
+    }
+
+    return loadExtension(pathOrId, true, excludes, function (error, extensionPath) {
         if (error) {
             return cb(error);
         }
