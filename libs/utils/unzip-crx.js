@@ -4,20 +4,56 @@ var jszip = require('jszip');
 var path = require('path');
 var async = require('async');
 
-function doUnzip (buffer, targetPath, cb) {
-    var zip = new jszip(buffer);
+function doUnzip (buffer, targetPath, filter, cb) {
+    var prunedPaths = [];
 
+    // the problem here is that directory entries are optional in ZIPs
+    // i.e. they may contain 'dir/foo/file.ext' without containing 'dir/'
+    // and our glob may match some directory up the tree
+    // without matching the file entry itself
+    var excluded = function (filename) {
+        if (typeof filter === 'function') {
+            // this short-circuits the filter function
+            // to prevent endless spam down the tree
+            if (prunedPaths.some(p => filename.startsWith(p))) {
+                return true;
+            }
+
+            var parts = filename.split(/\//);
+            var partial = '';
+            for (var part of parts) {
+                if (partial.length === 0) {
+                    partial = part;
+                }
+                else {
+                    partial += '/' + part;
+                }
+
+                if (!filter(partial)) {
+                    prunedPaths.push(partial);
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
+    var zip = new jszip(buffer);
     async.eachSeries(Object.keys(zip.files), function (filename, onDone) {
+        if (excluded(filename)) {
+            return onDone(null);
+        }
+
         var isFile = !zip.files[filename].dir,
             fullpath  = path.join(targetPath, filename),
             directory = isFile && path.dirname(fullpath) || fullpath,
             content = zip.files[filename].asNodeBuffer();
-            
+
         fs.mkdirs(directory, function (error) {
             if (error) {
                 return onDone(error)
             }
-            
+
             if (isFile) {
                 return fs.writeFile(fullpath, content, onDone);
             }
@@ -30,9 +66,15 @@ function doUnzip (buffer, targetPath, cb) {
 }
 
 
-// Credits to Rob--W for the following 
+// Credits to Rob--W for the following
 // https://github.com/Rob--W/crxviewer/blob/master/src/lib/crx-to-zip.js
-function crxToZip (crxPath, targetPath, cb) {
+function crxToZip (crxPath, targetPath, filter, cb) {
+
+    if (typeof cb === 'undefined') {
+        cb = filter;
+        filter = null;
+    }
+
     fs.readFile(crxPath, function (error, buf) {
         if (error) {
             return cb(error);
@@ -41,7 +83,7 @@ function crxToZip (crxPath, targetPath, cb) {
         // 50 4b 03 04
         // This is actually a zip file
         if (buf[0] === 80 && buf[1] === 75 && buf[2] === 3 && buf[3] === 4) {
-            return doUnzip(buf, targetPath, cb);
+            return doUnzip(buf, targetPath, filter, cb);
         }
 
         // 43 72 32 34
@@ -59,7 +101,7 @@ function crxToZip (crxPath, targetPath, cb) {
         var zipStartOffset = 16 + publicKeyLength + signatureLength;
         var crx = buf.slice(zipStartOffset, buf.length);
 
-        return doUnzip(crx, targetPath, cb);
+        return doUnzip(crx, targetPath, filter, cb);
     });
 }
 

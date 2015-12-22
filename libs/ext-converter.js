@@ -65,9 +65,12 @@ function convertExtension (extensionPath, outputPath, extensionId, cb) {
         // Zip converted extension
         fs.walk(extensionPath)
         .on('data', function (item) {
+            var relPath = path.relative(extensionPath, item.path);
             if (item.stats.isFile()) {
-                var relPath = path.relative(extensionPath, item.path);
                 zip.file(relPath, fs.readFileSync(item.path), zipOpts);
+            }
+            else if (item.stats.isDirectory()) {
+                zip.folder(relPath);
             }
         })
         .on('end', function () {
@@ -81,8 +84,13 @@ function convertExtension (extensionPath, outputPath, extensionId, cb) {
     });
 }
 
-function converter (pathOrId, outputPath, extensionId, cb) {
-    return loadExtension(pathOrId, false, function (error, extensionPath) {
+function converter (pathOrId, outputPath, extensionId, excludes, cb) {
+    if (typeof excludes === 'function') {
+        cb = excludes;
+        excludes = null;
+    }
+
+    return loadExtension(pathOrId, false, excludes, function (error, extensionPath) {
         if (error) {
             return cb(error);
         }

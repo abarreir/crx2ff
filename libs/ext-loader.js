@@ -1,30 +1,15 @@
 var tmp = require('tmp');
 var fs = require('fs-extra');
 var path = require('path');
-var chalk = require('chalk');
 
 var dlCrx = require('./utils/dl-crx');
 var crxUnzip = require('./utils/unzip-crx');
+var Filter = require('./utils/filter');
 
 var cwsIdRegex = /[a-z]{32}/;
 
-var ignoreBaseNames = [
-    '\\.git',
-    '\\.hg',
-    '\\.svn',
-    '\\.DS_Store'
-].join('|');
+function loadFromPath (extensionPath, readOnly, excludes, cb) {
 
-var ignoreFileExts = [
-    'pem'
-].join('|');
-
-var filterRegex = new RegExp('(' + path.sep + '|^)(' + ignoreBaseNames +
-                             '|[^' + path.sep + ']+?\\.(' + ignoreFileExts + '))$');
-                            // does not support file names like '^.<ext>$'
-                            // e.g. '.gitignore' use ignoreBaseNames instead
-
-function loadFromPath (extensionPath, readOnly, cb) {
     fs.lstat(extensionPath, function (error, stats) {
         if (error) {
             return cb(error);
@@ -52,36 +37,33 @@ function loadFromPath (extensionPath, readOnly, cb) {
                 return cb(null, tmpPath);
             };
 
-            var filter = function(currentPath) {
-                var skip = filterRegex.test(currentPath);
-                if (skip) {
-                    console.log(chalk.yellow('Skipping', currentPath));
-                }
-                return !skip;
-            };
-
             // Copy extension directory into temporary one for modification
+            var filter = Filter(excludes);
             if (stats.isDirectory()) {
                 fs.copy(extensionPath, tmpPath, filter, done);
             } else {
-                crxUnzip(extensionPath, tmpPath, done);
+                crxUnzip(extensionPath, tmpPath, filter, done);
             }
         });
     });
 }
 
-function load (idOrPath, readOnly, cb) {
+function load (idOrPath, readOnly, excludes, cb) {
+    if (typeof excludes === 'function') {
+        cb = excludes;
+        excludes = null;
+    }
     if (idOrPath.match(cwsIdRegex)) {
         return dlCrx(idOrPath, function (error, crxPath) {
             if (error) {
                 return cb(error);
             }
 
-            return loadFromPath(crxPath, true, cb);
+            return loadFromPath(crxPath, true, excludes, cb);
         });
     }
 
-    return loadFromPath(idOrPath, readOnly, cb);
+    return loadFromPath(idOrPath, readOnly, excludes, cb);
 }
 
 module.exports = load;
