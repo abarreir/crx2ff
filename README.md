@@ -2,6 +2,8 @@
 
 [![NPM Version](https://img.shields.io/npm/v/crx2ff.svg)](https://www.npmjs.com/package/crx2ff)
 [![NPM Downloads](https://img.shields.io/npm/dm/crx2ff.svg)](http://npm-stat.com/charts.html?package=crx2ff&author=&from=&to=)
+[![Build Status](https://travis-ci.org/abarreir/crx2ff.svg)](https://travis-ci.org/abarreir/crx2ff)
+[![Coverage Status](https://coveralls.io/repos/abarreir/crx2ff/badge.svg?branch=master&service=github)](https://coveralls.io/github/abarreir/crx2ff?branch=master)
 
 Check the compatibility of a Chrome extension with the Firefox WebExtensions API.
 
