@@ -49,7 +49,7 @@ function updateManifest (extensionPath, extensionId, cb) {
         // Must be first script in list since it overrides the chrome object
         m.background.scripts.unshift('chrome-apis-proxy.js');
 
-        fs.writeFile(manifestPath, JSON.stringify(m), cb);
+        fs.writeFile(manifestPath, JSON.stringify(m, null, '\t'), cb);
     });
 }
 
