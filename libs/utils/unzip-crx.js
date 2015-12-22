@@ -15,16 +15,19 @@ function doUnzip (buffer, targetPath, filter, cb) {
         if (typeof filter === 'function') {
             // this short-circuits the filter function
             // to prevent endless spam down the tree
-            if (prunedPaths.some(p => filename.startsWith(p)))
+            if (prunedPaths.some(p => filename.startsWith(p))) {
                 return true;
+            }
 
             var parts = filename.split(/\//);
             var partial = '';
             for (var part of parts) {
-                if (partial.length === 0)
+                if (partial.length === 0) {
                     partial = part;
-                else
+                }
+                else {
                     partial += '/' + part;
+                }
 
                 if (!filter(partial)) {
                     prunedPaths.push(partial);
@@ -37,8 +40,9 @@ function doUnzip (buffer, targetPath, filter, cb) {
 
     var zip = new jszip(buffer);
     async.eachSeries(Object.keys(zip.files), function (filename, onDone) {
-        if (excluded(filename))
+        if (excluded(filename)) {
             return onDone(null);
+        }
 
         var isFile = !zip.files[filename].dir,
             fullpath  = path.join(targetPath, filename),
