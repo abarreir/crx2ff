@@ -11,6 +11,9 @@
   "bin": {
     "crx2ff": "cli.js"
   },
+  "scripts": {
+    "test": "tap test/*.js"
+  },
   "dependencies": {
     "async": "^1.4.2",
     "chalk": "^1.1.1",
@@ -38,5 +41,8 @@
     "name": "Alexandre Barreira",
     "email": "abarreir@gmail.com"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "tap": "^2.3.3"
+  }
 }
