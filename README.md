@@ -15,10 +15,10 @@ npm install -g crx2ff
 
 ```sh
 # Analyse an extension
-crx2ff analyse <extension> [--reporter=<REPORTER>] [--report-file=<FILE>]
+crx2ff analyse <extension> [--exclude-glob=<GLOB>] [--reporter=<REPORTER>] [--report-file=<FILE>]
 
 # Convert an extension
-crx2ff convert <extension> [--output=<FILE>] [--id=<ID>]
+crx2ff convert <extension> [--exclude-glob=<GLOB>] [--output=<FILE>] [--id=<ID>]
 ```
 
 ### Arguments
@@ -27,6 +27,9 @@ The extension to process can be provided as:
 * A path to a local extension folder
 * A path to a local crx or zip of the extension
 * An id of an extension stored on the Chrome WebStore
+
+Common arguments
+* `--exclude-glob=GLOB`: a `minimatch` glob to exclude paths during analysis/packaging. Defaults to `**/{.git,.hg,.svn,.DS_Store,*.pem}`.
 
 Reporting arguments
 * `--reporter=REPORTER` Analysis reporter selection (defaults to cli)
