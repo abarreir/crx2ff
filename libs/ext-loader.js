@@ -42,7 +42,7 @@ function loadFromPath (extensionPath, readOnly, excludes, cb) {
             if (stats.isDirectory()) {
                 fs.copy(extensionPath, tmpPath, filter, done);
             } else {
-                crxUnzip(extensionPath, tmpPath, done);
+                crxUnzip(extensionPath, tmpPath, filter, done);
             }
         });
     });
