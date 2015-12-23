@@ -49,6 +49,18 @@ function updateManifest (extensionPath, extensionId, cb) {
         // Must be first script in list since it overrides the chrome object
         m.background.scripts.unshift('chrome-apis-proxy.js');
 
+        // add api proxy to content scripts
+        if (m.content_scripts) {
+            var proxy = {
+                matches: ['<all_urls>'],
+                match_about_blank: true,
+                all_frames: true,
+                js: ['chrome-apis-proxy.js'],
+                run_at: 'document_start'
+            };
+            m.content_scripts.unshift(proxy);
+        }
+
         fs.writeFile(manifestPath, JSON.stringify(m, null, '\t'), cb);
     });
 }
