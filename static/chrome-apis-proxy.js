@@ -1,6 +1,20 @@
 (() => {
     // Save global chrome object
     const gchrome = chrome;
+    const CONTEXT = (() => {
+        try {
+            var protocol = window.location.protocol;
+            if (protocol === "chrome-extension:" || protocol === "moz-extension:") {
+                return "background";
+            }
+            else {
+                return "content script";
+            }
+        }
+        catch (e) {
+            return "content script";
+        }
+    })();
 
     // Proxy the global chrome object and warn about missing props/func calls
     chrome = new Proxy(gchrome, {
@@ -13,7 +27,7 @@
                         return undefined;
                     } else {
                         var propsChain = "chrome." + name + "." + pname;
-                        crx2ffwarn(propsChain + " not supported yet");
+                        crx2ffwarn(propsChain + " not supported in " + CONTEXT);
                         return recursiveProxy(propsChain);
                     }
                 }
@@ -32,7 +46,7 @@
             },
 
             apply: function () {
-                crx2ffwarn(propsChain + " called");
+                crx2ffwarn(propsChain + " called in " + CONTEXT);
             }
         })
     }
