@@ -7,7 +7,7 @@ var esprima = require('esprima');
 var loadExtension = require('./ext-loader');
 var apiProxyPath = __dirname + '/../static/chrome-apis-proxy.js';
 
-function updateManifest (extensionPath, extensionId, cb) {
+function updateManifest (extensionPath, extensionId, useProxy, cb) {
     // Add missing fields to json manifest
     var manifestPath = extensionPath + "/manifest.json";
 
@@ -42,31 +42,33 @@ function updateManifest (extensionPath, extensionId, cb) {
             }
         };
 
-        // Add path to our api proxy script
-        if (!m.background) m.background = {};
-        if (!m.background.scripts) m.background.scripts = [];
+        if (useProxy) {
+            // Add path to our api proxy script
+            if (!m.background) m.background = {};
+            if (!m.background.scripts) m.background.scripts = [];
 
-        // Must be first script in list since it overrides the chrome object
-        m.background.scripts.unshift('chrome-apis-proxy.js');
+            // Must be first script in list since it overrides the chrome object
+            m.background.scripts.unshift('chrome-apis-proxy.js');
 
-        // add api proxy to content scripts
-        if (m.content_scripts) {
-            var proxy = {
-                matches: ['<all_urls>'],
-                match_about_blank: true,
-                all_frames: true,
-                js: ['chrome-apis-proxy.js'],
-                run_at: 'document_start'
-            };
-            m.content_scripts.unshift(proxy);
+            // add api proxy to content scripts
+            if (m.content_scripts) {
+                var proxy = {
+                    matches: ['<all_urls>'],
+                    match_about_blank: true,
+                    all_frames: true,
+                    js: ['chrome-apis-proxy.js'],
+                    run_at: 'document_start'
+                };
+                m.content_scripts.unshift(proxy);
+            }
         }
 
         fs.writeFile(manifestPath, JSON.stringify(m, null, '\t'), cb);
     });
 }
 
-function convertExtension (extensionPath, outputPath, extensionId, cb) {
-    updateManifest(extensionPath, extensionId, function (error) {
+function convertExtension (extensionPath, outputPath, extensionId, proxy, cb) {
+    updateManifest(extensionPath, extensionId, proxy, function (error) {
         if (error) {
             return cb(error);
         }
@@ -86,8 +88,11 @@ function convertExtension (extensionPath, outputPath, extensionId, cb) {
             }
         })
         .on('end', function () {
-            // Add our api proxy script to bundle
-            zip.file('chrome-apis-proxy.js', fs.readFileSync(apiProxyPath), zipOpts);
+
+            if (proxy) {
+                // Add our api proxy script to bundle
+                zip.file('chrome-apis-proxy.js', fs.readFileSync(apiProxyPath), zipOpts);
+            }
 
             var z = zip.generate({type: 'nodebuffer'});
 
@@ -96,18 +101,21 @@ function convertExtension (extensionPath, outputPath, extensionId, cb) {
     });
 }
 
-function converter (pathOrId, outputPath, extensionId, excludes, cb) {
-    if (typeof excludes === 'function') {
-        cb = excludes;
-        excludes = null;
+function converter (pathOrId, outputPath, extensionId, opts, cb) {
+    if (typeof opts === 'function') {
+        cb = opts;
+        opts = { proxy: true };
+    }
+    else if (typeof opts === 'string') {
+        opts = { excludeGlob: opts, proxy: true };
     }
 
-    return loadExtension(pathOrId, false, excludes, function (error, extensionPath) {
+    return loadExtension(pathOrId, false, opts.excludeGlob, function (error, extensionPath) {
         if (error) {
             return cb(error);
         }
 
-        return convertExtension(extensionPath, outputPath, extensionId, cb);
+        return convertExtension(extensionPath, outputPath, extensionId, opts.proxy, cb);
     });
 }
 

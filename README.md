@@ -40,6 +40,7 @@ Reporting arguments
 Conversion arguments
 * `--output=FILE` Conversion output file (defaults to ./crx2ff.xpi)
 * `--id=ID` Created extension id (defaults to crx2ff@example.org)
+* `--no-proxy` Do not include `chrome-apis-proxy.js` for unsupported API access logging
 
 ## License
 

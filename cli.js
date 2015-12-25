@@ -22,14 +22,14 @@ if (argv._.length === 1) {
     return console.error("Provide the path or id of the extension to be processed.");
 }
 
-var excludes = argv['exclude-glob'] || null;
+var excludeGlob = argv['exclude-glob'] || null;
 
 if (command === 'analyse') {
     if (argv.reporter && argv.reporter.match(/^(cli|json)$/) === null) {
         return console.error("Reporter can only be 'cli' or 'json'.");
     }
 
-    return extensionChecker(argv._[1], excludes, function (error, report) {
+    return extensionChecker(argv._[1], excludeGlob, function (error, report) {
         if (error) {
             return console.error(error);
         }
@@ -42,7 +42,11 @@ if (command === 'analyse') {
         return cliReporter(report);
     });
 } else {
-    return extensionConverter(argv._[1], argv.output, argv.id, excludes, function (error) {
+    var opts = {
+        excludeGlob: excludeGlob,
+        proxy: 'proxy' in argv ? argv.proxy : true,
+    };
+    return extensionConverter(argv._[1], argv.output, argv.id, opts, function (error) {
         if (error) {
             return console.error(error);
         }
