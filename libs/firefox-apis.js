@@ -307,10 +307,7 @@ function CookiesSupport (propsChain) {
         return new SupportStatus("WARN", "This method always just returns one default store and no tabs.");
     }
 
-    return [
-        new SupportStatus("WARN", "Accessing cookies from private tabs is impossible."),
-        new SupportStatus("WARN", "Host permissions are not currently enforced.")
-    ];
+    return new SupportStatus("WARN", "Accessing cookies from private tabs is impossible.");
 }
 
 module.exports = {
