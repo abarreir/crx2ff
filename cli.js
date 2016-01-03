@@ -43,10 +43,12 @@ if (command === 'analyse') {
     });
 } else {
     var opts = {
+        outputPath: argv.output,
+        extensionId: argv.id,
         excludeGlob: excludeGlob,
         proxy: 'proxy' in argv ? argv.proxy : true,
     };
-    return extensionConverter(argv._[1], argv.output, argv.id, opts, function (error) {
+    return extensionConverter(argv._[1], opts, function (error) {
         if (error) {
             return console.error(error);
         }

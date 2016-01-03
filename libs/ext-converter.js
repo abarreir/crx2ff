@@ -67,8 +67,8 @@ function updateManifest (extensionPath, extensionId, useProxy, cb) {
     });
 }
 
-function convertExtension (extensionPath, outputPath, extensionId, proxy, cb) {
-    updateManifest(extensionPath, extensionId, proxy, function (error) {
+function convertExtension (extensionPath, opts, cb) {
+    updateManifest(extensionPath, opts.extensionId, opts.proxy, function (error) {
         if (error) {
             return cb(error);
         }
@@ -89,25 +89,22 @@ function convertExtension (extensionPath, outputPath, extensionId, proxy, cb) {
         })
         .on('end', function () {
 
-            if (proxy) {
+            if (opts.proxy) {
                 // Add our api proxy script to bundle
                 zip.file('chrome-apis-proxy.js', fs.readFileSync(apiProxyPath), zipOpts);
             }
 
             var z = zip.generate({type: 'nodebuffer'});
 
-            fs.writeFile(outputPath || 'crx2ff.xpi', z, cb);
+            fs.writeFile(opts.outputPath || 'crx2ff.xpi', z, cb);
         });
     });
 }
 
-function converter (pathOrId, outputPath, extensionId, opts, cb) {
+function converter (pathOrId, opts, cb) {
     if (typeof opts === 'function') {
         cb = opts;
         opts = { proxy: true };
-    }
-    else if (typeof opts === 'string') {
-        opts = { excludeGlob: opts, proxy: true };
     }
 
     return loadExtension(pathOrId, false, opts.excludeGlob, function (error, extensionPath) {
@@ -115,7 +112,7 @@ function converter (pathOrId, outputPath, extensionId, opts, cb) {
             return cb(error);
         }
 
-        return convertExtension(extensionPath, outputPath, extensionId, opts.proxy, cb);
+        return convertExtension(extensionPath, opts, cb);
     });
 }
 
