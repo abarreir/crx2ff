@@ -61,7 +61,6 @@ function ContentScriptsKeySupport (value) {
 
 function PermissionsKeySupport (value) {
     var noSupport = [
-        "activeTab",
         "background",
         "clipboardRead",
         "clipboardWrite",
