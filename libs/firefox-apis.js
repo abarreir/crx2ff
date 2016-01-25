@@ -332,6 +332,7 @@ module.exports = {
 
     // Future APIs
     "commands": FutureSupport(),
+    "debugger": FutureSupport(),
     "downloads": FutureSupport(),
     "history": FutureSupport(),
     "idle": FutureSupport(),
