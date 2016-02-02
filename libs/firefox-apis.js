@@ -156,9 +156,7 @@ function TabsSupport (propsChain) {
         "getSelected",
         "duplicate",
         "highlight",
-        "move",
         "detectLanguage",
-        "captureVisibleTab",
         "getZoom",
         "setZoom",
         "getZoomSettings",
@@ -186,9 +184,6 @@ function TabsSupport (propsChain) {
         return new SupportStatus("WARN", "Highlighted and active are treated as the same since Firefox cannot select multiple tabs.");
     }
 
-    if (propsChain.indexOf("executeScript") === 0) {
-        return new SupportStatus("WARN", "The callback argument is not supported yet.");
-    }
     if (propsChain.indexOf("sendMessage") === 0) {
         return new SupportStatus("WARN", "The implementation appears to be broken. See bug 1209869.");
     }
