@@ -22,33 +22,21 @@ function FullSupport () {
 }
 
 function ExtensionSupport (propsChain) {
-    var support = [
-        "getURL",
-        "inIncognitoContex",
-        "getBackgroundPage",
-        "getViews",
-    ].join('|');
-
-    var r = new RegExp("^(" + support + ")");
-
-    if (r.exec(propsChain) !== null) {
-        return new SupportStatus("SUPPORT");
-    }
-
-    var futureSupport = [
+    var noSupport = [
         "isAllowedIncognitoAccess",
         "isAllowedFileSchemeAccess",
         "setUpdateUrlData",
-        "lastError",
+        "onRequest",
+        "onRequestExternal"
     ].join('|');
 
-    var r2 = new RegExp("^(" + futureSupport + ")");
+    var r = new RegExp("^(" + noSupport + ")");
 
-    if (r2.exec(propsChain) !== null) {
-        return new SupportStatus("FUTURE_SUPPORT");
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("NO_SUPPORT");
     }
 
-    return new SupportStatus("NO_SUPPORT");
+    return new SupportStatus("SUPPORT");
 }
 
 function i18nSupport (propsChain) {
@@ -220,7 +208,6 @@ function WebRequestSupport (propsChain) {
     var noSupport = [
         "handlerBehaviorChanged",
         "onAuthRequired",
-        "onBeforeRedirect",
         "onErrorOccurred"
     ].join('|');
 
