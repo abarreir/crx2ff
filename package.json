@@ -1,6 +1,6 @@
 {
   "name": "crx2ff",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Check the compatibility of a Chrome extension with the Firefox WebExtensions API.",
   "main": "index.js",
   "repository": {
