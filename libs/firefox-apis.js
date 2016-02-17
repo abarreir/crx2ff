@@ -251,7 +251,6 @@ function WindowsSupport (propsChain) {
 function BookmarksSupport (propsChain) {
     var noSupport = [
         "getRecent",
-        "search",
         "removeTree",
         "onCreated",
         "onRemoved",
