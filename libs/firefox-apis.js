@@ -141,14 +141,7 @@ function StorageSupport (propsChain) {
 function TabsSupport (propsChain) {
     var noSupport = [
         "sendRequest",
-        "getSelected",
-        "duplicate",
-        "highlight",
-        "detectLanguage",
-        "getZoom",
-        "setZoom",
-        "getZoomSettings",
-        "setZoomSettings"
+        "getSelected"
     ].join('|');
 
     var r = new RegExp("^(" + noSupport + ")");
