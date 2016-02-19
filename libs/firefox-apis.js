@@ -284,6 +284,14 @@ function CookiesSupport (propsChain) {
     return new SupportStatus("WARN", "Accessing cookies from private tabs is impossible.");
 }
 
+function CommandsSupport (propsChain) {
+    if (propsChain.indexOf("onCommand") == 0) {
+        return new SupportStatus("NO_SUPPORT");
+    }
+
+    return new SupportStatus("SUPPORT");
+}
+
 module.exports = {
     // Fully supported APIs
     "alarms": FullSupport(),
@@ -293,6 +301,7 @@ module.exports = {
 
     // Partially supported APIs
     "bookmarks": BookmarksSupport,
+    "commands": CommandsSupport,
     "cookies": CookiesSupport,
     "extension": ExtensionSupport,
     "i18n": i18nSupport,
@@ -305,7 +314,6 @@ module.exports = {
     "windows": WindowsSupport,
 
     // Future APIs
-    "commands": FutureSupport(),
     "debugger": FutureSupport(),
     "downloads": FutureSupport(),
     "history": FutureSupport(),
