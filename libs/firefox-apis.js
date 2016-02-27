@@ -166,11 +166,8 @@ function TabsSupport (propsChain) {
 
 function WebNavigationSupport (propsChain) {
     var noSupport = [
-        "getFrame",
-        "getAllFrames",
         "onCreatedNavigationTarget",
-        "onHistoryStateUpdated",
-        "onTabReplaced",
+        "onTabReplaced"
     ].join('|');
 
     var r = new RegExp("^(" + noSupport + ")");
