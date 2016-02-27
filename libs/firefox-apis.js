@@ -292,6 +292,19 @@ function CommandsSupport (propsChain) {
     return new SupportStatus("SUPPORT");
 }
 
+function DownloadsSupport (propsChain) {
+    var support = [
+        "download"
+    ].join('|');
+
+    var r = new RegExp("^(" + support + ")");
+    if (r.exec(propsChain) !== null) {
+        return new SupportStatus("SUPPORT");
+    }
+
+    return new SupportStatus("FUTURE_SUPPORT");
+}
+
 module.exports = {
     // Fully supported APIs
     "alarms": FullSupport(),
@@ -303,6 +316,7 @@ module.exports = {
     "bookmarks": BookmarksSupport,
     "commands": CommandsSupport,
     "cookies": CookiesSupport,
+    "downloads": DownloadsSupport,
     "extension": ExtensionSupport,
     "i18n": i18nSupport,
     "notifications": NotificationsSupport,
@@ -315,7 +329,6 @@ module.exports = {
 
     // Future APIs
     "debugger": FutureSupport(),
-    "downloads": FutureSupport(),
     "history": FutureSupport(),
     "idle": FutureSupport(),
     "omnibox": FutureSupport(),
