@@ -42,22 +42,14 @@ function ExtensionSupport (propsChain) {
 function i18nSupport (propsChain) {
     var support = [
         "getMessage",
+        "getAcceptLanguages",
+        "getUILanguage",
+        "detectLanguage"
     ].join('|');
 
     var r = new RegExp("^(" + support + ")");
     if (r.exec(propsChain) !== null) {
         return new SupportStatus("SUPPORT");
-    }
-
-    var futureSupport = [
-        "getAcceptLanguages",
-        "getUILanguage",
-        "detectLanguage",
-    ].join('|');
-
-    var r2 = new RegExp("^(" + futureSupport + ")");
-    if (r2.exec(propsChain) !== null) {
-        return new SupportStatus("FUTURE_SUPPORT");
     }
 
     return new SupportStatus("NO_SUPPORT");
